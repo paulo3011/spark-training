@@ -31,7 +31,7 @@ public class SparkSubmit {
                 .config(sparkConf)
                 .getOrCreate()) {
 
-            System.out.println("Making spark job sleep for 3 minutes to be able to see the spark ui running at http://localhost:4747 or http://localhost:4848");
+            System.out.println("Making spark job sleep for 3 minutes to be able to see the spark ui running at http://localhost:4747 or http://localhost:4848 or http://localhost:4949");
 
             int sleepSeconds = 180;
             Thread.sleep(1000 * sleepSeconds);

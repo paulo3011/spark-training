@@ -31,12 +31,29 @@ services:
       - "4848:4040" # Spark Driver Web UI. Your application's dashboard, which shows memory and workload data. Can be swap out through spark.ui.port
     depends_on:
       - spark-master
-    command: ["spark://spark-master:7077"] #  Invalid master URL: spark://sleep
+    command: ["spark://spark-master:7077"]
     environment:
       - SPARK_WORKER_CORES=1
       #- SPARK_WORKER_MEMORY=1G
       #- SPARK_DRIVER_MEMORY=1G
       #- SPARK_EXECUTOR_MEMORY=1G
+    volumes:
+      - ../apps:/opt/spark-apps
+      - ../data:/opt/spark-data
+    networks:
+      - dev_spark_net
+
+  spark-worker-b:
+    container_name: spark-worker-b
+    image: spark-test-worker
+    ports:
+      - "9092:8081" # Worker Web UI
+      - "4949:4040" # Spark Driver Web UI. Your application's dashboard, which shows memory and workload data. Can be swap out through spark.ui.port
+    depends_on:
+      - spark-master
+    command: ["spark://spark-master:7077"]
+    environment:
+      - SPARK_WORKER_CORES=1
     volumes:
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
