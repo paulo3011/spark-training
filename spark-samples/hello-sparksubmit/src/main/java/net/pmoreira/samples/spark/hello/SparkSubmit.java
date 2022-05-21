@@ -5,15 +5,18 @@ import org.apache.spark.sql.SparkSession;
 
 public class SparkSubmit {
     /**
-     * 1) copia o jar para o master e worker
-     * docker cp hello-sparksubmit-all.jar spark-test-master:/tmp/hello-sparksubmit-all.jar
-     * docker cp hello-sparksubmit-all.jar spark-test-worker:/tmp/hello-sparksubmit-all.jar
-     * or mount volume
+     * 1) Copy the jar to master and worker nodes or mount volume:
      *
-     * To submit a jar spark application to standalone cluster through spark-submit:
-     * Note: first need to ssh into master node.
+     *  docker cp hello-sparksubmit-all.jar spark-test-master:/tmp/hello-sparksubmit-all.jar
+     *  docker cp hello-sparksubmit-all.jar spark-test-worker:/tmp/hello-sparksubmit-all.jar
      *
-     * spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit --deploy-mode cluster --master spark://172.17.0.3:7077 /tmp/hello-sparksubmit-all.jar
+     *
+     * 2) To submit a jar spark application to standalone cluster through spark-submit:
+     * Note: first need to ssh into master node or: docker exect -it spark-master bash.
+     *
+     * spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit --deploy-mode cluster --master spark://spark-master:7077 /tmp/hello-sparksubmit-all.jar
+     *
+     * Or seealso: spark-samples/docker/build/README.md | spark-samples/docker/build/docker-compose.yml
      *
      * @param args
      */
@@ -28,14 +31,8 @@ public class SparkSubmit {
                 .config(sparkConf)
                 .getOrCreate()) {
 
-            System.out.println("Go to the Web browser and see the spark ui running. http://localhost:4040");
-            /*
-            Try to look at: localhost:4040 or see on the run output log something like:
-            SparkUI: Bound SparkUI to 0.0.0.0, and started at http://172.17.95.117:4040.
-            Look at different tabs to get know what in there. E.g:
-            - Executors: (How many executors are running)
-            - Environment/Resource Profiles (How many memory each executor request?)
-             */
+            System.out.println("Making spark job sleep for 3 minutes to be able to see the spark ui running at http://localhost:4747 or http://localhost:4848");
+
             int sleepSeconds = 180;
             Thread.sleep(1000 * sleepSeconds);
 
