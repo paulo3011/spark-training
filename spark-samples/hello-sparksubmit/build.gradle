@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+group 'net.pmoreira'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.apache.spark/spark-core
+    implementation group: 'org.apache.spark', name: 'spark-core_2.12', version: '3.2.1'
+    // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
+    implementation group: 'org.apache.spark', name: 'spark-sql_2.12', version: '3.2.1'
+    // https://mvnrepository.com/artifact/org.apache.spark/spark-avro
+    implementation group: 'org.apache.spark', name: 'spark-avro_2.12', version: '3.2.1'
+}
+
+shadowJar {
+
+    group 'build'
+
+    manifest {
+        attributes 'Main-Class': 'net.pmoreira.samples.spark.hello.SparkSubmit'
+        attributes 'Description': 'Spark-Submit empty job sample'
+        attributes 'Specification-Version': project.version
+        attributes 'Built-By': System.getProperty('user.name')
+        attributes 'Built-JDK': System.getProperty('java.version')
+        attributes 'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+    }
+
+    zip64 true
+    //If working with a Gradle project with the name myApp and archiveVersion 1.0, the default shadowJar task will output a file at: build/libs/myApp-1.0-all.jar
+    archiveVersion.set('')
+
+    //relocate 'com.google.protobuf', 'shadow.google.protobuf'
+    //classifier ''
+}
