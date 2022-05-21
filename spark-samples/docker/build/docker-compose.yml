@@ -1,0 +1,47 @@
+version: "3.9"
+
+# manual execution
+# docker run --rm -p 9091:8080 -p 7077:7077 -p 4747:4040 spark-test-master
+# docker run --rm -p 9093:8081 -p 4848:4040 spark-test-worker spark://spark-master:7077
+
+services:
+  spark-master:
+    container_name: spark-master
+    image: spark-test-master
+    #build:
+    #  context: .
+    #  dockerfile: master/Dockerfile
+    ports:
+      - "9090:8080" # Master Web UI
+      - "7077:7077" # Master listen port
+      - "4747:4040" # Spark Driver Web UI (for client mode)
+    volumes:
+      - ../apps:/opt/spark-apps
+      - ../data:/opt/spark-data
+    networks:
+      - dev_spark_net
+  spark-worker-a:
+    container_name: spark-worker-a
+    image: spark-test-worker
+    #build:
+    #  context: .
+    #  dockerfile: worker/Dockerfile
+    ports:
+      - "9091:8081" # Worker Web UI
+      - "4848:4040" # Spark Driver Web UI. Your application's dashboard, which shows memory and workload data. Can be swap out through spark.ui.port
+    depends_on:
+      - spark-master
+    command: ["spark://spark-master:7077"] #  Invalid master URL: spark://sleep
+    environment:
+      - SPARK_WORKER_CORES=1
+      #- SPARK_WORKER_MEMORY=1G
+      #- SPARK_DRIVER_MEMORY=1G
+      #- SPARK_EXECUTOR_MEMORY=1G
+    volumes:
+      - ../apps:/opt/spark-apps
+      - ../data:/opt/spark-data
+    networks:
+      - dev_spark_net
+
+networks:
+  dev_spark_net:
