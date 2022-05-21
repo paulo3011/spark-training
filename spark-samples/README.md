@@ -7,6 +7,10 @@ This project was built using:
 - gradle-wrapper with gradle version: Gradle 7.1.1 (https://docs.gradle.org/current/userguide/gradle_wrapper.html)
 - jvm version: corretto-15
 
+**Notes**:
+
+- To run this sample it is recommended that you have at least 2GB of RAM, as by default Spark Standalone uses total avalable memory minus 1GB (for the OS)
+
 1. Clone the project
 
 ```shell
@@ -21,6 +25,7 @@ cd spark-samples
 # check version
 ./gradlew --version
 # Welcome to Gradle 7.1.1!
+# https://docs.gradle.org/7.1.1/dsl/index.html
 ```
 
 3. Install spark 3.2.1 on local ubuntu
@@ -82,7 +87,10 @@ export SPARK_MASTER_WEBUI_PORT=8087
 # check service
 sudo ss -tunelp | grep 8087
 # tcp    LISTEN  0       1                         *:8087                 *:*      users:(("java",pid=30244,fd=294)) uid:1000 ino:4743475 sk:5 v6only:0 <->
+# ./bin/spark-shell --master spark://localhost:7077
 ```
+
+
 
 Starting work:
 
@@ -125,3 +133,8 @@ test: Adding tests, refactoring test; no production code change
 chore: Updating build tasks, package manager configs, etc; no production code change
 
 https://udacity.github.io/git-styleguide/
+
+
+# Gradle references
+
+https://docs.gradle.org/current/samples/sample_building_java_applications_multi_project.html
