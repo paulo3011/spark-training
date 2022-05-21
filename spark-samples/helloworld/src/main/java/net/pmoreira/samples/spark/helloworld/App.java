@@ -9,6 +9,7 @@ public class App {
 
         SparkConf sparkConf = new SparkConf();
         sparkConf.setAppName("Hello-World--Start-Spark");
+        //https://spark.apache.org/docs/latest/submitting-applications.html#master-urls
         sparkConf.set("spark.master","local[*]");
 
         try (SparkSession sparkSession = SparkSession
