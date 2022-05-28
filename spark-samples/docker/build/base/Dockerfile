@@ -28,7 +28,7 @@ RUN apt-get install -y curl
 RUN apt-get install -y tar
 RUN apt-get install -y gzip
 
-# Remove unneeded /var/lib/apt/lists/* after install to reduce the
+# Remove unneeded /var/lib/apt/lists/* after install to reduce the image size
 RUN rm -rf /var/lib/apt/lists/*
 
 # The WORKDIR instruction sets the working directory for any RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile.

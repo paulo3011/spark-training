@@ -17,5 +17,8 @@
 #
 
 FROM spark-test-base
-ADD default_cmd /root/
+# copy entrypoint file to image
+COPY default_cmd /root/
+# change file permission to allow execute
+RUN chmod +x /root/default_cmd
 CMD ["/root/default_cmd"]
