@@ -35,8 +35,8 @@ services:
     depends_on:
       - spark-master
     command: ["spark://spark-master:7077"]
-    environment:
-      - SPARK_WORKER_CORES=1
+    #environment:
+      #- SPARK_WORKER_CORES=1
       #- SPARK_WORKER_MEMORY=1G
       #- SPARK_DRIVER_MEMORY=1G
       #- SPARK_EXECUTOR_MEMORY=1G
@@ -55,8 +55,8 @@ services:
     depends_on:
       - spark-master
     command: ["spark://spark-master:7077"]
-    environment:
-      - SPARK_WORKER_CORES=1
+    #environment:
+      #- SPARK_WORKER_CORES=1
     volumes:
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
