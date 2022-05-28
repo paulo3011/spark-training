@@ -12,6 +12,7 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.storage.StorageLevel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class App {
@@ -19,13 +20,14 @@ public class App {
         System.out.println("starting spark app");
 
         SparkConf sparkConf = new SparkConf();
+        //sparkConf.setJars(new String[]{"/home/paulo/projects/paulo3011/spark-training/spark-samples/docker/apps/logs-heapdump_on_outof_memory_error-all.jar"});
         sparkConf.setAppName("Hello-World-Spark-Logs-DumpOnError");
 
         //To run an application on the Spark cluster, simply pass the spark://IP:PORT URL of the master as to the SparkContext constructor.
-        //use this master if you haven't install spark on you local ubuntu
+        //use this master if you haven't install spark on you local ubuntu or in docker
         //sparkConf.set("spark.master","local[*]");
         //if you have install spark on your local ubuntu
-        sparkConf.set("spark.master","spark://localhost:7077");
+        //sparkConf.set("spark.master","spark://localhost:7077");
 
         //Spark properties mainly can be divided into two kinds: one is related to deploy, like spark.driver.memory, spark.executor.instances, this kind of properties may not be affected when setting programmatically through SparkConf in runtime, or the behavior is depending on which cluster manager and deploy mode you choose, so it would be suggested to set through configuration file or spark-submit command line options; another is mainly related to Spark runtime control, like spark.task.maxFailures, this kind of properties can be set in either way.
         //Amount of memory to use per executor process, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g). Default 1g
@@ -36,7 +38,6 @@ public class App {
          */
         sparkConf.set("spark.executor.cores", "1");
         sparkConf.set("spark.executor.instances", "1");
-
 
         //Whether to use dynamic resource allocation, which scales the number of executors registered with this application up and down based on the workload
         sparkConf.set("spark.dynamicAllocation.enabled", "false");
@@ -56,10 +57,10 @@ public class App {
         //sparkConf.set("spark.eventLog.dir", "/tmp/spark/ui-events");
 
         //If true, spark application running in client mode will write driver logs to a persistent storage, configured in spark.driver.log.dfsDir.
-        sparkConf.set("spark.driver.log.persistToDfs.enabled","true");
+        //sparkConf.set("spark.driver.log.persistToDfs.enabled","true");
         //Base directory in which Spark driver logs are synced, if spark.driver.log.persistToDfs.enabled is true.
         //remember: to avoid /tmp/spark/driver-logs/ does not exist. Please create this dir in order to persist driver logs
-        sparkConf.set("spark.driver.log.dfsDir","/opt/spark/logs/driver-logs/");
+        //sparkConf.set("spark.driver.log.dfsDir","/opt/spark/logs/driver-logs/");
 
         try (SparkSession sparkSession = SparkSession
                 .builder()
