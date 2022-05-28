@@ -67,6 +67,15 @@ spark-submit --class net.pmoreira.samples.spark.logs.heapdump.App \
 /opt/spark-apps/logs-heapdump_on_outof_memory_error-all.jar
 ```
 
+9. Run with docker cluster heapdump sample
+
+```shell
+spark-submit --class net.pmoreira.samples.spark.logs.heapdump.App \
+--deploy-mode client \
+--master spark://spark-master:7077 \
+/opt/spark-apps/logs-heapdump_on_outof_memory_error-all.jar
+```
+
 # References
 
 This standalone docker-compose was made based on: https://github.com/apache/spark/tree/v3.2.0/external/docker/spark-test
