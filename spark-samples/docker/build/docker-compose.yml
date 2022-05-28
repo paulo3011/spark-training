@@ -3,6 +3,8 @@ version: "3.9"
 # manual execution
 # docker run --rm -p 9091:8080 -p 7077:7077 -p 4747:4040 spark-test-master
 # docker run --rm -p 9093:8081 -p 4848:4040 spark-test-worker spark://spark-master:7077
+# to check files
+# docker run -it --rm -p 9091:8080 -p 7077:7077 -p 4747:4040 spark-test-master bash
 
 services:
   spark-master:
