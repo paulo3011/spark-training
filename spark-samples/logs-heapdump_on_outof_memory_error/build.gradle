@@ -42,4 +42,11 @@ shadowJar {
 
     //relocate 'com.google.protobuf', 'shadow.google.protobuf'
     //classifier ''
+    doLast {
+        copy {
+            from ('build/libs/')
+            into ('../docker/apps/')
+            include '*.jar'
+        }
+    }
 }
