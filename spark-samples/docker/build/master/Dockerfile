@@ -21,4 +21,6 @@ FROM spark-test-base
 COPY default_cmd /root/
 # change file permission to allow execute
 RUN chmod +x /root/default_cmd
+# EXPOSE intellij remote debug port
+EXPOSE 5005
 CMD ["/root/default_cmd"]

@@ -76,3 +76,4 @@ WORKDIR /opt/spark
 
 # for develpment tests
 EXPOSE 8080 8081 7077 4040 4041 18080
+EXPOSE 8888

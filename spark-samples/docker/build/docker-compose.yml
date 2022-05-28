@@ -17,6 +17,7 @@ services:
       - "9090:8080" # Master Web UI
       - "7077:7077" # Master listen port
       - "4747:4040" # Spark Driver Web UI (for client mode)
+      - "5005:5005" # for intellij remote debug
     volumes:
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data

@@ -41,6 +41,22 @@ spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit --deploy-mode 
 
 6. Open in browser http://localhost:4747/ to see the Driver UI
 
+7. Debug with intellij remote debug
+   1. run shadow jar for hello-sparksubmit module
+   2. copy the fat jar to spark-samples/docker/apps
+   3. login into the master node 
+   4. Start the spark application on the master node
+    ```shell
+    spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit \
+    --deploy-mode client \
+    --master spark://spark-master:7077 \
+    --conf "spark.driver.extraJavaOptions=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005" \
+    /opt/spark-apps/hello-sparksubmit-all.jar 
+    ```
+   Note: the address format needs to be in the format expected by the JDK version. See also: 
+   - https://stackoverflow.com/questions/46662125/remote-debugging-java-9-in-a-docker-container-from-intellij-idea/47772365#47772365
+   - https://medium.com/agile-lab-engineering/spark-remote-debugging-371a1a8c44a8
+   - https://spark.apache.org/developer-tools.html (other way of Debug Spark remotely)
 
 # References
 
