@@ -3,4 +3,5 @@ include 'helloworld'
 include 'logs-heapdump_on_outof_memory_error'
 include 'hello-sparksubmit'
 include 'hello-simplejar'
+include 'hello-spark'
 

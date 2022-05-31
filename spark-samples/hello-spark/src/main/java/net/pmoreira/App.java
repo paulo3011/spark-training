@@ -1,4 +1,4 @@
-package net.pmoreira.samples.spark.helloworld;
+package net.pmoreira;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.SparkSession;
