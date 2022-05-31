@@ -56,6 +56,9 @@ ENV PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 
 WORKDIR /opt/spark
 
+# create dirs for custom logs
+RUN mkdir logs && mkdir ./logs/heap-dumps
+
 # Default ports for standalone mode
 # https://spark.apache.org/docs/latest/spark-standalone.html#installing-spark-standalone-to-a-cluster
 # Port for web UI (default: 8080 for master, 8081 for worker)
