@@ -17,7 +17,6 @@
 #
 
 FROM spark-test-base
-ENV SPARK_WORKER_PORT 8888
 # copy entrypoint file to image
 COPY default_cmd /root/
 # change file permission to allow execute

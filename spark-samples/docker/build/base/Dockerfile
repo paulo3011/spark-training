@@ -48,35 +48,49 @@ RUN mv spark-3.2.1-bin-hadoop3.2 /opt/spark
 # delete gzip file
 RUN rm spark-3.2.1-bin-hadoop3.2.tgz
 
-# values are available to containers, but also RUN-style commands during the Docker build starting with the line where they are introduced.
+# ENV values are available to containers, but also RUN-style commands during the Docker build starting with the line where they are introduced.
 # If you set an environment variable in an intermediate container using bash (RUN export VARI=5 && …) it will not persist in the next command.
 # https://vsupalov.com/docker-arg-env-variable-guide/
+
 ENV SPARK_HOME=/opt/spark
+# Put the SPARK_HOME in the machine path so that we can run spark
 ENV PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 
 WORKDIR /opt/spark
 
+# https://spark.apache.org/docs/latest/spark-standalone.html#monitoring-and-logging
+# Detailed log output for each job is also written to the work directory of each worker node (SPARK_HOME/work by default).
+# You will see two files for each job, stdout and stderr, with all output it wrote to its console
 # create dirs for custom logs
 RUN mkdir logs && mkdir ./logs/heap-dumps
 
-# Default ports for standalone mode
-# https://spark.apache.org/docs/latest/spark-standalone.html#installing-spark-standalone-to-a-cluster
-# Port for web UI (default: 8080 for master, 8081 for worker)
-# We can change master web ui through SPARK_MASTER_WEBUI_PORT env
-# We can change worker web ui through SPARK_WORKER_WEBUI_PORT env
-# Port for service to listen on (default: 7077 for master, random for worker)
-# We can change worker port through SPARK_WORKER_PORT env
-# We can change master port through SPARK_MASTER_PORT env
-
-# https://spark.apache.org/docs/3.2.1/monitoring.html
-# The application web UI at http://<driver>:4040 - your application's dashboard, which shows memory and workload data. Can be swap out through spark.ui.port
-# If multiple SparkContexts are running on the same host, they will bind to successive ports beginning with 4040 (4041, 4042, etc).
+# Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk.
+# This should be on a fast, local disk in your system. It can also be a comma-separated list of multiple directories on different disks.
+# ENV SPARK_LOCAL_DIRS
+# Directory to run applications in, which will include both logs and scratch space (default: SPARK_HOME/work).
+# ENV SPARK_WORKER_DIR
 
 # A nice image of default spark ports: https://www.ibm.com/docs/en/SSCTFE_1.1.0/com.ibm.azk.v1r1.azka100/images/spark-ports.gif
 
+# Ports for standalone mode
+
+# https://spark.apache.org/docs/latest/spark-standalone.html#installing-spark-standalone-to-a-cluster
+# The master and each worker has its own web UI that shows cluster and job statistics.
+# Port for web UI (default: 8080 for master, 8081 for worker)
+# We can change master web ui through SPARK_MASTER_WEBUI_PORT env
+# We can change worker web ui through SPARK_WORKER_WEBUI_PORT env
+EXPOSE 8080 8081
+# Port for service to listen on (default: 7077 for master, random for worker)
+# We can change worker port through SPARK_WORKER_PORT env
+# We can change master port through SPARK_MASTER_PORT env (default: 7077)
+ENV SPARK_MASTER_PORT 7077
+EXPOSE 7077
+ENV SPARK_WORKER_PORT 8888
+EXPOSE 8888
+# https://spark.apache.org/docs/3.2.1/monitoring.html
+# The application web UI at http://<driver>:4040 - your application's dashboard, which shows memory and workload data. Can be swap out through spark.ui.port
+# If multiple SparkContexts are running on the same host, they will bind to successive ports beginning with 4040 (4041, 4042, etc).
+EXPOSE 4040 4041
 # history server - 18080 (listing incomplete and completed applications and attempts). https://spark.apache.org/docs/3.2.1/monitoring.html
 # You can start the history server by executing: ./sbin/start-history-server.sh
-
-# for develpment tests
-EXPOSE 8080 8081 7077 4040 4041 18080
-EXPOSE 8888
+EXPOSE 18080

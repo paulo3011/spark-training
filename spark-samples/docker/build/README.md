@@ -23,6 +23,13 @@ docker exec -it spark-master bash
 ls /opt/spark-apps
 # hello-sparksubmit-all.jar
 ```
+
+
+```shell
+# log into master shell
+docker exec -it spark-worker-a bash
+```
+
 4. Submit a sample spark jar application in cluster mode
 
 ```shell
@@ -57,6 +64,7 @@ spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit --deploy-mode 
    - https://stackoverflow.com/questions/46662125/remote-debugging-java-9-in-a-docker-container-from-intellij-idea/47772365#47772365
    - https://medium.com/agile-lab-engineering/spark-remote-debugging-371a1a8c44a8
    - https://spark.apache.org/developer-tools.html (other way of Debug Spark remotely)
+   
 8. Debug heapdump sample
 
 ```shell
@@ -64,15 +72,6 @@ spark-submit --class net.pmoreira.samples.spark.logs.heapdump.App \
 --deploy-mode client \
 --master spark://spark-master:7077 \
 --conf "spark.driver.extraJavaOptions=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005" \
-/opt/spark-apps/logs-heapdump_on_outof_memory_error-all.jar
-```
-
-9. Run with docker cluster heapdump sample
-
-```shell
-spark-submit --class net.pmoreira.samples.spark.logs.heapdump.App \
---deploy-mode client \
---master spark://spark-master:7077 \
 /opt/spark-apps/logs-heapdump_on_outof_memory_error-all.jar
 ```
 

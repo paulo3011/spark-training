@@ -20,58 +20,26 @@ public class App {
         System.out.println("starting spark app");
 
         SparkConf sparkConf = new SparkConf();
-        //sparkConf.setJars(new String[]{"/home/paulo/projects/paulo3011/spark-training/spark-samples/docker/apps/logs-heapdump_on_outof_memory_error-all.jar"});
         sparkConf.setAppName("Hello-World-Spark-Logs-DumpOnError");
-
-        //To run an application on the Spark cluster, simply pass the spark://IP:PORT URL of the master as to the SparkContext constructor.
-        //use this master if you haven't install spark on you local ubuntu or in docker
-        //sparkConf.set("spark.master","local[*]");
-        //if you have install spark on your local ubuntu
-        //sparkConf.set("spark.master","spark://localhost:7077");
-
-        //Spark properties mainly can be divided into two kinds: one is related to deploy, like spark.driver.memory, spark.executor.instances, this kind of properties may not be affected when setting programmatically through SparkConf in runtime, or the behavior is depending on which cluster manager and deploy mode you choose, so it would be suggested to set through configuration file or spark-submit command line options; another is mainly related to Spark runtime control, like spark.task.maxFailures, this kind of properties can be set in either way.
-        //Amount of memory to use per executor process, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g). Default 1g
-        sparkConf.set("spark.executor.memory","2g");
-        /*
-            The number of cores to use on each executor. In standalone and Mesos modes:
-            - default: all available; only on worker
-         */
-        sparkConf.set("spark.executor.cores", "1");
-        sparkConf.set("spark.executor.instances", "1");
-
-        //Whether to use dynamic resource allocation, which scales the number of executors registered with this application up and down based on the workload
-        sparkConf.set("spark.dynamicAllocation.enabled", "false");
-
-        //A string of extra JVM options to pass to executors. This is intended to be set by users. For instance, GC settings or other logging.
-        sparkConf.set("spark.executor.extraJavaOptions","-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/spark/logs/heap-dumps");
-        /*
-        HeapDumpOnOutOfMemoryError: Dump heap to file when java.lang.OutOfMemoryError is thrown from JVM
-        HeapDumpPath: When HeapDumpOnOutOfMemoryError is on, the path (filename or directory) of the dump file (defaults to java_pid.hprof in the working directory)
-        seealso: https://chriswhocodes.com/corretto_jdk17_options.html
-         */
-
-        //Whether to log Spark events, useful for reconstructing the Web UI after the application has finished.
-        //sparkConf.set("spark.eventLog.enabled", "true");
-        //Base directory in which Spark events are logged, if spark.eventLog.enabled is true. Within this base directory, Spark creates a sub-directory for each application, and logs the events specific to the application in this directory. Users may want to set this to a unified location like an HDFS directory so history files can be read by the history server.
-        //befor you need to create the dir, e.g: mkdir /tmp/spark/ui-events
-        //sparkConf.set("spark.eventLog.dir", "/tmp/spark/ui-events");
-
-        //If true, spark application running in client mode will write driver logs to a persistent storage, configured in spark.driver.log.dfsDir.
-        //sparkConf.set("spark.driver.log.persistToDfs.enabled","true");
-        //Base directory in which Spark driver logs are synced, if spark.driver.log.persistToDfs.enabled is true.
-        //remember: to avoid /tmp/spark/driver-logs/ does not exist. Please create this dir in order to persist driver logs
-        //sparkConf.set("spark.driver.log.dfsDir","/opt/spark/logs/driver-logs/");
+        //set spark.rpc.message.maxSize to avoid rpc error
+        sparkConf.set("spark.rpc.message.maxSize", "2000");//2047MB
 
         try (SparkSession sparkSession = SparkSession
                 .builder()
                 .config(sparkConf)
                 .getOrCreate()) {
 
+            System.out.println("Started sparksession");
+
             //create a spark java context to be able to work with spark java class
             JavaSparkContext javaSparkContext = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
 
+            System.out.println("Started JavaSparkContext");
+
             //create a java rdd from an in memory csv dataset
             JavaRDD<String> javaRDD = createJavaRdd(javaSparkContext);
+
+            System.out.println("Created JavaRDD");
 
             JavaRDD<Row> rowsRdd = javaRDD.map(row -> {
                String[] csvColumns = row.split(",");
@@ -87,28 +55,11 @@ public class App {
             Dataset<Row> dataframe = sparkSession.createDataFrame(rowsRdd, schema);
 
             //cache the dataframe to see his size in memory on spark-ui/storage
-            dataframe = dataframe.persist(StorageLevel.MEMORY_ONLY());
+            //dataframe = dataframe.persist(StorageLevel.MEMORY_ONLY());
 
             long total = dataframe.count();
 
             System.out.printf("\ntotal of records: %s \n\n", total);
-
-            //print on output screen 3 rows of the dataframe
-            dataframe.show(3);
-
-            System.out.println("Go to the Web browser and see the spark ui running. http://localhost:4040");
-            /*
-            Try to look at: localhost:4040 or see on the run output log something like:
-            SparkUI: Bound SparkUI to 0.0.0.0, and started at http://172.17.95.117:4040.
-            Go to Environment/Spark Properties and search for spark.executor.extraJavaOptions
-            to see if your settings was applied.
-             */
-            int sleepSeconds = 1;
-
-            Thread.sleep(1000 * sleepSeconds);
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         System.out.println("=>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>>>>>>>>>>>>> >>>>>>>>>");
@@ -117,8 +68,10 @@ public class App {
     }
 
     private static JavaRDD<String> createJavaRdd(JavaSparkContext javaSparkContext) {
-        //will create a dataset of approximately 512 MB => 512000
-        return javaSparkContext.parallelize(createCsvDataset(1000));
+        //will create a cvs with 512000 lines and the jvm heap set to 1G will have a peak of 0.96GB and will throw OnOutOfMemoryError
+        ArrayList<String> list = createCsvDataset(512000);
+        System.out.println("Created arraylist, will parallelize to create RDD");
+        return javaSparkContext.parallelize(list);
     }
 
     private static ArrayList<String> createCsvDataset(int numberLines){

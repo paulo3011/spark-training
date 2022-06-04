@@ -18,6 +18,9 @@ services:
       - "7077:7077" # Master listen port
       - "4747:4040" # Spark Driver Web UI (for client mode)
       - "5005:5005" # for intellij remote debug
+    environment:
+      # https://spark.apache.org/docs/latest/spark-standalone.html
+      - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
     volumes:
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
@@ -35,11 +38,11 @@ services:
     depends_on:
       - spark-master
     command: ["spark://spark-master:7077"]
-    #environment:
-      #- SPARK_WORKER_CORES=1
-      #- SPARK_WORKER_MEMORY=1G
-      #- SPARK_DRIVER_MEMORY=1G
-      #- SPARK_EXECUTOR_MEMORY=1G
+    environment:
+      # https://spark.apache.org/docs/latest/spark-standalone.html
+      - SPARK_WORKER_CORES=10 # Total number of cores to allow Spark applications to use on the machine (default: all available cores).
+      - SPARK_WORKER_MEMORY=10G # Total amount of memory to allow Spark applications to use on the machine, e.g. 1000m, 2g (default: total memory minus 1 GiB); note that each application's individual memory is configured using its spark.executor.memory property.
+      - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
     volumes:
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
@@ -55,8 +58,11 @@ services:
     depends_on:
       - spark-master
     command: ["spark://spark-master:7077"]
-    #environment:
-      #- SPARK_WORKER_CORES=1
+    environment:
+      # https://spark.apache.org/docs/latest/spark-standalone.html
+      - SPARK_WORKER_CORES=10 # Total number of cores to allow Spark applications to use on the machine (default: all available cores).
+      - SPARK_WORKER_MEMORY=10G # Total amount of memory to allow Spark applications to use on the machine, e.g. 1000m, 2g (default: total memory minus 1 GiB); note that each application's individual memory is configured using its spark.executor.memory property.
+      - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
     volumes:
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data

@@ -5,7 +5,7 @@
 This project was built using:
 
 - gradle-wrapper with gradle version: Gradle 7.1.1 (https://docs.gradle.org/current/userguide/gradle_wrapper.html)
-- jvm version: corretto-15
+- jvm version: corretto-11 (spark support java version 8 or 11 and ond EMR 5 or later use by default 8)
 
 **Notes**:
 
@@ -138,3 +138,8 @@ https://udacity.github.io/git-styleguide/
 # Gradle references
 
 https://docs.gradle.org/current/samples/sample_building_java_applications_multi_project.html
+
+# Todo
+
+- https://spark.apache.org/docs/0.6.0/tuning.html (kryo, memory size, parallelism, gc tuning)
+  - https://spark.apache.org/docs/latest/tuning.html (new method size estimate for memory size)
