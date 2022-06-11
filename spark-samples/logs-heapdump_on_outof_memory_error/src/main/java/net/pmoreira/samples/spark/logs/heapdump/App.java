@@ -54,9 +54,7 @@ public class App {
             //create a dataframe
             Dataset<Row> dataframe = sparkSession.createDataFrame(rowsRdd, schema);
 
-            //cache the dataframe to see his size in memory on spark-ui/storage
-            //dataframe = dataframe.persist(StorageLevel.MEMORY_ONLY());
-
+            //start the job (call an action)
             long total = dataframe.count();
 
             System.out.printf("\ntotal of records: %s \n\n", total);
