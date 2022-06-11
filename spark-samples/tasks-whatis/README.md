@@ -45,6 +45,10 @@ Everything inside the stage (all transformation) is what one task will run at on
 
 ![img.png](../assets/img/task-visualization.png)
 
+Run the gradle task "shadowJar" to build the fat jar and copy the jar to the docker volume.
+
+![](../assets/img/run-shadow-tasks-whatis.png)
+
 Submit the sample spark jar application (tasks-whatis-all.jar) in client mode from master node
 
 ```shell
