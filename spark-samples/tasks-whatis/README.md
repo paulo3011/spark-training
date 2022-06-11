@@ -103,4 +103,30 @@ In the log above, we can see that we created an input dataset with 3 partitions.
 Each executor + core (cpu) can process one partition at time.
 If we have 2 executor and 2 cores for each executor, will be possible to process 4 partition in parallel.
 
-3. What is the diference between map task and task (stage task)?
+To see the task launch time be differ and that the number of cores affects the number of parallelism, run:
+
+(in this execution we will have only one executor with 2 cores and parallelism of two task at time)
+
+```shell
+docker exec -it spark-master bash
+spark-submit --class net.pmoreira.samples.spark.tasks.whatis.App \
+--deploy-mode client \
+--master spark://spark-master:7077 \
+--verbose \
+--driver-memory 3g \
+--driver-cores 1 \
+--driver-java-options "-XX:OnOutOfMemoryError='kill -9 %p'" \
+--conf spark.driver.log.persistToDfs.enabled=true \
+--conf spark.driver.log.dfsDir=/opt/spark/logs/ \
+--conf "spark.executor.extraJavaOptions=-verbose:gc -Xlog:gc=debug:file=/opt/spark/logs/-executorgclog.txt -XX:OnOutOfMemoryError='kill -9 %p'" \
+--executor-memory 1g \
+--total-executor-cores 2 \
+--executor-cores 2 \
+/opt/spark-apps/tasks-whatis-all.jar
+```
+
+![img.png](../assets/img/see-task-parallism.png)
+
+In the above execution, only after releasing a core that another task was launched.
+
+# What is the diference between map task and task (stage task)?
