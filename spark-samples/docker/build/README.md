@@ -1,4 +1,4 @@
-Spark Docker files usable for testing and development purposes.
+Spark standalone docker cluster usable for testing and development purposes.
 
 1. Build docker images for Spark 3.2.1
 
