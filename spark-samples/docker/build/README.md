@@ -94,6 +94,13 @@ Open in browser http://localhost:4747/ to see the Driver UI
 
    ![img.png](../../assets/img/remote-debug-app-running.png)
 
+2. Reset the cluster
+
+```shell
+docker compose down
+docker compose up
+```
+
 # References
 
 This standalone docker-compose was made based on: https://github.com/apache/spark/tree/v3.2.0/external/docker/spark-test
