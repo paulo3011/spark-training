@@ -51,10 +51,12 @@ Open in browser http://localhost:4747/ to see the Driver UI
 
 
 7. Debug with intellij remote debug
-   1. run shadow jar for hello-sparksubmit module
-   2. copy the fat jar to spark-samples/docker/apps
-   3. login into the master node 
-   4. Start the spark application on the master node
+   1. Run shadow jar for hello-sparksubmit module
+   
+   ![img.png](../../assets/img/run-shadow-spark-submit.png)
+   
+   2. The gradle task will copy the fat jar to spark-samples/docker/apps
+   3. Start the spark application on the master node
    
     ```shell
    docker exec -it spark-master bash
@@ -64,11 +66,33 @@ Open in browser http://localhost:4747/ to see the Driver UI
     --conf "spark.driver.extraJavaOptions=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005" \
     /opt/spark-apps/hello-sparksubmit-all.jar 
     ```
-   Note: the address format needs to be in the format expected by the JDK version. See also: 
+   
+   Note: the address (e.g address=*:5005) format in spark.driver.extraJavaOptions needs to be in the format expected by the JDK version. See also: 
    - https://stackoverflow.com/questions/46662125/remote-debugging-java-9-in-a-docker-container-from-intellij-idea/47772365#47772365
    - https://medium.com/agile-lab-engineering/spark-remote-debugging-371a1a8c44a8
    - https://spark.apache.org/developer-tools.html (other way of Debug Spark remotely)
    
+
+   ![img.png](../../assets/img/listening-for-debug.png)
+
+
+   4. Configure the intellij run configuration for remote debug
+   
+   ```txt
+   -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+   ```
+
+   ![img.png](../../assets/img/remote-debug-sample.png)
+   
+   5. Click on debug icon
+
+   ![img.png](../../assets/img/starting-remote-debug.png)
+
+   ![img.png](../../assets/img/remote-debug-conection-ok.png)
+
+   6. Go to spark master UI to see the app running
+
+   ![img.png](../../assets/img/remote-debug-app-running.png)
 
 # References
 

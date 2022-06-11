@@ -42,10 +42,14 @@ chore: Updating build tasks, package manager configs, etc; no production code ch
 
 https://udacity.github.io/git-styleguide/
 
-
 # Gradle references
 
 https://docs.gradle.org/current/samples/sample_building_java_applications_multi_project.html
+
+
+# Docker instructions
+
+[docker readme.md](docker/build/README.md)
 
 # Todo
 
