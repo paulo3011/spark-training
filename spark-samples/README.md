@@ -32,13 +32,13 @@ cd spark-samples
 
 # Git style guide
 
-feat: A new feature
-fix: A bug fix
-docs: Changes to documentation
-style: Formatting, missing semi colons, etc; no code change
-refactor: Refactoring production code
-test: Adding tests, refactoring test; no production code change
-chore: Updating build tasks, package manager configs, etc; no production code change
+- feat: A new feature
+- fix: A bug fix
+- docs: Changes to documentation
+- style: Formatting, missing semi colons, etc; no code change
+- refactor: Refactoring production code
+- test: Adding tests, refactoring test; no production code change
+- chore: Updating build tasks, package manager configs, etc; no production code change
 
 https://udacity.github.io/git-styleguide/
 
@@ -51,7 +51,6 @@ https://docs.gradle.org/current/samples/sample_building_java_applications_multi_
 
 [docker readme.md](docker/build/README.md)
 
-# Todo
+# Road map
 
-- https://spark.apache.org/docs/0.6.0/tuning.html (kryo, memory size, parallelism, gc tuning)
-  - https://spark.apache.org/docs/latest/tuning.html (new method size estimate for memory size)
+[roadmap.md](roadmap.md)
