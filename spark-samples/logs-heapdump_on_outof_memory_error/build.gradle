@@ -40,8 +40,7 @@ shadowJar {
     //If working with a Gradle project with the name myApp and archiveVersion 1.0, the default shadowJar task will output a file at: build/libs/myApp-1.0-all.jar
     archiveVersion.set('')
 
-    //relocate 'com.google.protobuf', 'shadow.google.protobuf'
-    //classifier ''
+    //copy the fat jar to docker apps folder.
     doLast {
         copy {
             from ('build/libs/')

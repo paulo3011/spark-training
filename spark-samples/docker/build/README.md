@@ -21,7 +21,6 @@ docker compose up
 docker exec -it spark-master bash
 # check if the apps are present
 ls /opt/spark-apps
-# hello-sparksubmit-all.jar
 ```
 
 
@@ -33,6 +32,7 @@ docker exec -it spark-worker-a bash
 4. Submit a sample spark jar application in cluster mode
 
 ```shell
+docker exec -it spark-master bash
 spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit --deploy-mode cluster --master spark://spark-master:7077 /opt/spark-apps/hello-sparksubmit-all.jar
 ```
 
@@ -43,17 +43,21 @@ Note: spark job will sleep for 3 minutes and then will finish
 6. Submit a sample spark jar application in client mode from master node
 
 ```shell
+docker exec -it spark-master bash
 spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit --deploy-mode client --master spark://spark-master:7077 /opt/spark-apps/hello-sparksubmit-all.jar
 ```
 
-6. Open in browser http://localhost:4747/ to see the Driver UI
+Open in browser http://localhost:4747/ to see the Driver UI
+
 
 7. Debug with intellij remote debug
    1. run shadow jar for hello-sparksubmit module
    2. copy the fat jar to spark-samples/docker/apps
    3. login into the master node 
    4. Start the spark application on the master node
+   
     ```shell
+   docker exec -it spark-master bash
     spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit \
     --deploy-mode client \
     --master spark://spark-master:7077 \
@@ -65,15 +69,6 @@ spark-submit --class net.pmoreira.samples.spark.hello.SparkSubmit --deploy-mode 
    - https://medium.com/agile-lab-engineering/spark-remote-debugging-371a1a8c44a8
    - https://spark.apache.org/developer-tools.html (other way of Debug Spark remotely)
    
-8. Debug heapdump sample
-
-```shell
-spark-submit --class net.pmoreira.samples.spark.logs.heapdump.App \
---deploy-mode client \
---master spark://spark-master:7077 \
---conf "spark.driver.extraJavaOptions=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005" \
-/opt/spark-apps/logs-heapdump_on_outof_memory_error-all.jar
-```
 
 # References
 
