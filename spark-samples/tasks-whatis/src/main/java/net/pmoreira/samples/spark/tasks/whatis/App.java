@@ -1,6 +1,5 @@
 package net.pmoreira.samples.spark.tasks.whatis;
 
-import net.pmoreira.samples.spark.tasks.whatis.mappers.CountWordsMapper;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkEnv;
 import org.apache.spark.TaskContext;
