@@ -5,4 +5,5 @@ include 'hello-sparksubmit'
 include 'hello-simplejar'
 include 'hello-spark'
 include 'tasks-whatis'
+include 'partition-whatis'
 
