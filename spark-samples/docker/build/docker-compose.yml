@@ -22,10 +22,14 @@ services:
       # https://spark.apache.org/docs/latest/spark-standalone.html
       - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
     volumes:
+      ############ Custom user directories
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
+      ############ Spark default directories
       # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk. Spark uses temporary scratch space to spill data to disk during shuffles and other operations
       - ../data/master/work:/opt/spark/work
+      # The default location for managed databases and tables. Default (value of $PWD/spark-warehouse) - config: spark.sql.warehouse.dir
+      - ../data/master/spark-warehouse:/opt/spark/spark-warehouse
     networks:
       - dev_spark_net
   spark-worker-a:
@@ -46,10 +50,14 @@ services:
       - SPARK_WORKER_MEMORY=10G # Total amount of memory to allow Spark applications to use on the machine, e.g. 1000m, 2g (default: total memory minus 1 GiB); note that each application's individual memory is configured using its spark.executor.memory property.
       - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
     volumes:
+      ############ Custom user directories
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
+      ############ Spark default directories
       # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk. Spark uses temporary scratch space to spill data to disk during shuffles and other operations
       - ../data/worker-a/work:/opt/spark/work
+      # The default location for managed databases and tables. Default (value of $PWD/spark-warehouse) - config: spark.sql.warehouse.dir
+      - ../data/worker-a/spark-warehouse:/opt/spark/spark-warehouse
     networks:
       - dev_spark_net
 
@@ -68,10 +76,14 @@ services:
       - SPARK_WORKER_MEMORY=10G # Total amount of memory to allow Spark applications to use on the machine, e.g. 1000m, 2g (default: total memory minus 1 GiB); note that each application's individual memory is configured using its spark.executor.memory property.
       - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
     volumes:
+      ############ Custom user directories
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
-      # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk. Spark uses temporary scratch space to spill data to disk during shuffles and other operations.
+      ############ Spark default directories
+      # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk. Spark uses temporary scratch space to spill data to disk during shuffles and other operations
       - ../data/worker-b/work:/opt/spark/work
+      # The default location for managed databases and tables. Default (value of $PWD/spark-warehouse) - config: spark.sql.warehouse.dir
+      - ../data/worker-b/spark-warehouse:/opt/spark/spark-warehouse
     networks:
       - dev_spark_net
 

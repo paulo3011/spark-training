@@ -10,6 +10,15 @@ docker build -t spark-test-worker worker/
 
 2. Run docker compose
 
+Clear volume files:
+
+```shell
+cd ./../data/
+chmod +x clean.sh 
+sudo ./clean.sh
+```
+Start docker compose:
+
 ```shell
 docker compose up
 ```
