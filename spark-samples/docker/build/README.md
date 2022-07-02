@@ -107,6 +107,15 @@ Open in browser http://localhost:4747/ to see the Driver UI
 
 ```shell
 docker compose down
+```
+
+```shell
+cd ./../data/
+chmod +x clean.sh 
+sudo ./clean.sh
+```
+
+```shell
 docker compose up
 ```
 
