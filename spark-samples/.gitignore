@@ -188,4 +188,6 @@ docker/data/checkpoint
 docker/data/master
 docker/data/worker-a
 docker/data/worker-b
+docker/data/all-device*.csv
+docker/data/device*.csv
 docker/data/hugefile.csv
