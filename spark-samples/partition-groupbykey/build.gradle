@@ -27,7 +27,7 @@ shadowJar {
     group 'build'
 
     manifest {
-        attributes 'Main-Class': 'net.pmoreira.samples.spark.partition.whatis.App'
+        attributes 'Main-Class': 'net.pmoreira.samples.spark.partition.groupbykey.App'
         attributes 'Description': 'Spark sample explaing the partition concept'
         attributes 'Specification-Version': project.version
         attributes 'Built-By': System.getProperty('user.name')

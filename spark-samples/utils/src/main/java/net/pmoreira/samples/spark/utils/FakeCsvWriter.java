@@ -1,4 +1,4 @@
-package net.pmoreira.samples.spark.partition.whatis;
+package net.pmoreira.samples.spark.utils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -6,10 +6,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class FakeCsvWriter {
-
-    public static void main(String[] args) throws IOException {
-        createHugeCsvFile("docker/data/hugefile.csv");
-    }
 
     public static void createHugeCsvFile(String outputPath) throws IOException {
         String csvLine = "Spark performs as many steps as it can at one point in time before writing data to memory or disk.";
@@ -48,5 +44,3 @@ public class FakeCsvWriter {
 
     }
 }
-
-
