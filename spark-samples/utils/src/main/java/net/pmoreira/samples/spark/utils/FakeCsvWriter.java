@@ -1,7 +1,6 @@
 package net.pmoreira.samples.spark.utils;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -41,6 +40,33 @@ public class FakeCsvWriter {
                 byteBuffer.clear();
             }
         }
+    }
 
+    /**
+     * Concatenate two or more files into one.
+     * @param files List of file path to concatenate
+     * @param outputFile output file path
+     * @<code>
+     * //sample usage:
+     * FakeCsvWriter.createHugeCsvFile("File A", "docker/data/fileA.csv", 2);
+     * FakeCsvWriter.createHugeCsvFile("File B", "docker/data/fileB.csv", 2);
+     * String[] files = new String[] {"docker/data/fileA.csv", "docker/data/fileB.csv"};
+     * FakeCsvWriter.concatenateFiles(files,"docker/data/fileC.csv");
+     * </code>
+     * @throws IOException
+     */
+    public static void concatenateFiles(String[] files, String outputFile) throws IOException {
+        OutputStream out = new FileOutputStream(outputFile);
+        byte[] buffer = new byte[1024];
+        for (String file : files) {
+            InputStream fileInputStream = new FileInputStream(file);
+            int totalNumberOfBytesRead = 0;
+            while ( (totalNumberOfBytesRead = fileInputStream.read(buffer)) >= 0) {
+                if(totalNumberOfBytesRead > -1)
+                    out.write(buffer, 0, totalNumberOfBytesRead);
+            }
+            fileInputStream.close();
+        }
+        out.close();
     }
 }
