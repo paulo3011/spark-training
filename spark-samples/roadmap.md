@@ -99,3 +99,7 @@ References:
 - https://spark.apache.org/docs/latest/tuning.html (new method size estimate for memory size)
 
 2. How to view the real parallelism using coalesce with many partitions and executors? Will each executor run in parallel the coalesce command?
+
+References:
+
+- https://databricks.com/session_na20/the-apache-spark-file-format-ecosystem
