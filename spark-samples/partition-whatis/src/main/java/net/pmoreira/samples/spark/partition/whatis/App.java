@@ -48,8 +48,6 @@ public class App {
 
             System.out.println("Started sparksession");
 
-            //TODO ENTENDER PQ COM 1 EXECUTOR EXECUTOU 2 JOBS PARA CADA ETAPA VER SE COM MAIS EXECUTOR FAZ ISSO
-
             String filePath = "/opt/spark-data/hugefile.csv";
             Dataset<Row> df = sparkSession.read().csv(filePath);
 
