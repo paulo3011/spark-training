@@ -10,21 +10,24 @@ One partition will have  a parallelism of only one, even if you have many execut
 
 With many partitions and only one executor will give you a parallelism of only one.
 You need to balance the number of executors and partitions to have the desired parallelism. 
-This means that each partition will be processed by only one executor (1 executor for 1 partition for 1 task at a time),
-but each executor can process more than one partition at a time.
+This means that each partition will be processed by only one executor (1 executor for 1 partition for 1 task at a time).
 
 A good rule is that the number of partitions should be larger than the number of executors on your cluster
 
 See also:
 Chambers, Bill; Zaharia, Matei. Spark: The Definitive Guide: Big Data Processing Made Simple (p. 27). O'Reilly Media. Edição do Kindle.
 
+Note: Cores are slot for tasks, and each executor can process more than one partition at a time if it has more than one core.
+
 ## What types of partitions exists?
 
 ### Input partitions (size control)
 
-When the file is splittable, spark will break the file into the input partition size which by default is 128 MB.
+When the file is splittable, spark will break the file into the input partition size which by default is 128 MB (spark.sql.files.maxPartitionBytes).
 When the file is not splittable, each file will result in 1 partition.
 Sample of splittable files are: csv (in its simpliest form, spark can split the csv file into many partitions), avro, parquet, orc.
+
+Note: spark.sql.files.maxPartitionBytes -> The maximum number of bytes to pack into a single partition when reading files. It affects only read transformations (for example read a parquet file)
 
 ### Shuffle partitions (count control)
 
