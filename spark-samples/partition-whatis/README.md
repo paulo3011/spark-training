@@ -25,7 +25,7 @@ Note: Cores are slot for tasks, and each executor can process more than one part
 
 When the file is splittable, spark will break the file into the input partition size which by default is 128 MB (spark.sql.files.maxPartitionBytes).
 When the file is not splittable, each file will result in 1 partition.
-Sample of splittable files are: csv (in its simpliest form, spark can split the csv file into many partitions), avro, parquet, orc.
+Sample of splittable files are: csv (in its simpliest form, spark (v3.2) can split the csv file into many partitions), avro, parquet, orc.
 
 Note: spark.sql.files.maxPartitionBytes -> The maximum number of bytes to pack into a single partition when reading files. It affects only read transformations (for example read a parquet file)
 
@@ -45,7 +45,6 @@ Chambers, Bill; Zaharia, Matei. Spark: The Definitive Guide: Big Data Processing
 ### Output partitions (size control)
 
 It is the final result of the spark computation (output files).
-It is the result of the last stage.
 
 Reasons to change the output partitions number:
 
@@ -76,7 +75,7 @@ See also: https://spark.apache.org/docs/latest/configuration.html
 
 Chambers, Bill; Zaharia, Matei. Spark: The Definitive Guide: Big Data Processing Made Simple (p. 282). O'Reilly Media. Edição do Kindle.
 
-# Case study 01 - reading one 5.4 GB csv file and checking input partitions
+# Case study 01 - reading one 5.1 GB csv file and checking input partitions
 
 Emulate one file with about +- 5.192GB (csv)
 
@@ -101,15 +100,16 @@ Save the file in: /opt/spark-data/hugefile.csv
    1. default input partitions is 128 MB (reading files), then
    2. 5192/128 = 40,56 partitions (41)
 
-Run this run a job to count the number of partitions will be created on read the file.
+## Run a job to count the number of partitions will be created on read the file.
 
 Job parameters:
 
 * if args has --getNumInputPartitions will run df.rdd().getNumPartitions() action to count input partitions
 * if args has --triggerCount will execute count action on the dataset to count number of records
-* if args has --checkpointDataset will persist the dataset to disk to be able to see on disk the total of input partitions
+* if args has --checkpointDataset will persist the dataset to disk (/opt/spark-data/checkpoint/) in binary format be able to see on disk the total of input partitions
 * if args has --eagerCheckpoint and --checkpointDataset will persist the dataset to disk immediately before any action
 * if args has --sleepSeconds [number], i.e --sleepSeconds 90 at the end will sleep to keep the spark ui a live for 90 seconds
+* if args has --writeToDisk [outputpath] will save on disk the dataset in csv format
 
 ```shell
 docker exec -it spark-master bash
@@ -158,15 +158,34 @@ spark-submit --class net.pmoreira.samples.spark.partition.whatis.App \
 /opt/spark-apps/partition-whatis-all.jar --triggerCount --sleepSeconds 600
 ```
 
-![](../assets/img/partition-whatis-count-stage-tst-01.png)
+![](../assets/img/stage-details.png)
 
-![](../assets/img/partition-whatis-count-stage-details-tst-01.png)
+![](../assets/img/stage-details-2.png)
 
+![](../assets/img/executors-metrics.png)
+
+### Memory consumption in workers and master
+
+![](../assets/img/worker-a.png)
+
+![](../assets/img/worker-b.png)
+
+![](../assets/img/master.png)
+
+Notes
+
+* Spark by default uses 1GB of memory for master and worker daemons. In this test it was used up to 300 MB for each node (master, worker-a and worker-b)
+* We can see that each worker consumes 1 GB that we reserve for them
 
 ## Persist the Dataframe (RDD) to disk to see the number of files (partitions) after read the csv file
 
 Try --checkpointDataset and --eagerCheckpoint parameter to see the persisted RDD on disck in docker folder volume (docker/data/checkpoint) without execute any action.
 
+* Checkpoint is the act of saving an RDD to disk so that future references to this RDD point to those intermidiate partitions on disk rather than recomputing the RDD from original source. This is similar to cache but store only on disk.
+  * Chambers, Bill; Zaharia, Matei. Spark: The Definitive Guide: Big Data Processing Made Simple (p. 281). O'Reilly Media. Edição do Kindle.
+* Dataset<T> checkpoint(boolean eager): Returns a checkpointed version of this Dataset. Checkpointing can be used to truncate the logical plan of this Dataset, which is especially useful in iterative algorithms where the plan may grow exponentially. It will be saved to files inside the checkpoint directory set with SparkContext#setCheckpointDir.
+   * https://spark.apache.org/docs/latest/api/java/index.html
+  
 ```shell
 docker exec -it spark-master bash
 spark-submit --class net.pmoreira.samples.spark.partition.whatis.App \
@@ -192,6 +211,29 @@ spark-submit --class net.pmoreira.samples.spark.partition.whatis.App \
 ![](../assets/img/checkpoint-rdd-folder.png)
 
 ![](../assets/img/checkpoint-sample-code.png)
+
+## Save the dataframe (RDD) to disk as csv
+
+You will see that an output file will be created for each partition (41).
+
+```shell
+docker exec -it spark-master bash
+spark-submit --class net.pmoreira.samples.spark.partition.whatis.App \
+--deploy-mode client \
+--master spark://spark-master:7077 \
+--verbose \
+--driver-memory 3g \
+--driver-cores 1 \
+--driver-java-options "-XX:OnOutOfMemoryError='kill -9 %p'" \
+--conf "spark.executor.extraJavaOptions=-verbose:gc -Xlog:gc=debug:file=/opt/spark/logs/-executorgclog.txt -XX:OnOutOfMemoryError='kill -9 %p'" \
+--executor-memory 1g \
+--total-executor-cores 4 \
+--executor-cores 2 \
+/opt/spark-apps/partition-whatis-all.jar --writeToDisk /opt/spark-data/outputdir/hugecsvfile --sleepSeconds 600
+```
+
+![](../assets/img/write-to-disk-sample.png)
+
 
 # Case study 02 - Emulate spill do disk, shuffle and how to solve calculating the spark.sql.shuffle.partitions size
 

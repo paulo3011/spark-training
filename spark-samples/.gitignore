@@ -185,6 +185,7 @@ gradle-app.setting
 
 ## debug / test files
 docker/data/checkpoint
+docker/data/output*
 docker/data/master
 docker/data/worker-a
 docker/data/worker-b

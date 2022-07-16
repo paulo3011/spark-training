@@ -3,6 +3,7 @@ package net.pmoreira.samples.spark.partition.whatis;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 
 import java.util.Arrays;
@@ -16,9 +17,10 @@ public class App {
         /*
             if args has --getNumInputPartitions will run df.rdd().getNumPartitions() action to count input partitions
             if args has --triggerCount will execute count action on the dataset to count number of records
-            if args has --checkpointDataset will persist the dataset to disk to be able to see on disk the total of input partitions
+            if args has --checkpointDataset will persist the dataset to disk (/opt/spark-data/checkpoint/) in binary format be able to see on disk the total of input partitions
             if args has --eagerCheckpoint and --checkpointDataset will persist the dataset to disk immediately before any action
             if args has --sleepSeconds [number], i.e --sleepSeconds 90 at the end will sleep to keep the spark ui a live for 90 seconds
+            if args has --writeToDisk [outputpath] will save on disk the dataset in csv format
          */
         boolean getNumInputPartitions = Arrays.stream(args).anyMatch("--getNumInputPartitions"::equals);
         boolean triggerCount = Arrays.stream(args).anyMatch("--triggerCount"::equals);
@@ -26,6 +28,8 @@ public class App {
         boolean eagerCheckpoint = Arrays.stream(args).anyMatch("--eagerCheckpoint"::equals);
         boolean hasSleepSeconds = Arrays.stream(args).anyMatch("--sleepSeconds"::equals);
         int sleepSeconds = 60*6;
+        boolean writeToDisk = Arrays.stream(args).anyMatch("--writeToDisk"::equals);
+        String outputPath = "/opt/spark-data/outputdir/hugecsvfile";
 
         if(hasSleepSeconds){
             try {
@@ -35,6 +39,17 @@ public class App {
                     sleepSeconds = Integer.parseInt(args[sleepSecondsConfigValueIndex]);
             }catch (Exception ex){
                 //ignore sleep configuration errors
+            }
+        }
+
+        if(writeToDisk){
+            try {
+                int writeToDiskIndex = Arrays.stream(args).collect(Collectors.toList()).indexOf("--writeToDisk");
+                int writeToDiskConfigValueIndex = writeToDiskIndex + 1;
+                if (args.length > writeToDiskConfigValueIndex)
+                    outputPath = args[writeToDiskConfigValueIndex];
+            }catch (Exception ex){
+                //ignore writeToDisk configuration errors
             }
         }
 
@@ -51,7 +66,7 @@ public class App {
             String filePath = "/opt/spark-data/hugefile.csv";
             Dataset<Row> df = sparkSession.read().csv(filePath);
 
-            System.out.printf("Configured the dataframe to read: %s", filePath);
+            System.out.printf("Configured the dataframe to read: %s \n", filePath);
 
             if(getNumInputPartitions) {
                 int totalPartitions = df.rdd().setName("rdd_hugefile.csv").getNumPartitions();
@@ -63,6 +78,11 @@ public class App {
                 //to see the input partitions files in disk, persist the RDD partitions files in disk
                 sparkSession.sparkContext().setCheckpointDir("/opt/spark-data/checkpoint/");
                 df.checkpoint(eagerCheckpoint); //eager=true (checkpoint this DataFrame immediately)
+            }
+
+            if(writeToDisk) {
+                System.out.printf("Will write to disk in: %s \n", outputPath);
+                df.write().format("csv").mode(SaveMode.Overwrite).save(outputPath);
             }
 
             if(triggerCount) {
