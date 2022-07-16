@@ -21,12 +21,20 @@ services:
     environment:
       # https://spark.apache.org/docs/latest/spark-standalone.html
       - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
+      # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk.
+      - SPARK_LOCAL_DIRS=/opt/spark/scratch
+      # For standalone cluster, Directory to run applications in, which will include both logs and scratch space (default: SPARK_HOME/work).
+      - SPARK_WORKER_DIR=/opt/spark/work
     volumes:
       ############ Custom user directories
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
       ############ Spark default directories
-      # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk. Spark uses temporary scratch space to spill data to disk during shuffles and other operations
+      # Default directory to use for "scratch" space in Spark, overridden by SPARK_LOCAL_DIRS above in environment. Added this volume to see if something will be saved there.
+      - ../data/master/tmp:/tmp
+      # Directory to use for "scratch" in our standalone cluster (see SPARK_LOCAL_DIRS env above)
+      - ../data/master/scratch:/opt/spark/scratch
+      # For standalone cluster, to see files in the Directory to run applications in
       - ../data/master/work:/opt/spark/work
       # The default location for managed databases and tables. Default (value of $PWD/spark-warehouse) - config: spark.sql.warehouse.dir
       - ../data/master/spark-warehouse:/opt/spark/spark-warehouse
@@ -49,12 +57,20 @@ services:
       - SPARK_WORKER_CORES=10 # Total number of cores to allow Spark applications to use on the machine (default: all available cores).
       - SPARK_WORKER_MEMORY=10G # Total amount of memory to allow Spark applications to use on the machine, e.g. 1000m, 2g (default: total memory minus 1 GiB); note that each application's individual memory is configured using its spark.executor.memory property.
       - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
+      # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk.
+      - SPARK_LOCAL_DIRS=/opt/spark/scratch
+      # For standalone cluster, Directory to run applications in, which will include both logs and scratch space (default: SPARK_HOME/work).
+      - SPARK_WORKER_DIR=/opt/spark/work
     volumes:
       ############ Custom user directories
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
       ############ Spark default directories
-      # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk. Spark uses temporary scratch space to spill data to disk during shuffles and other operations
+      # Default directory to use for "scratch" space in Spark, overridden by SPARK_LOCAL_DIRS above in environment. Added this volume to see if something will be saved there.
+      - ../data/worker-a/tmp:/tmp
+      # Directory to use for "scratch" in our standalone cluster (see SPARK_LOCAL_DIRS env above)
+      - ../data/worker-a/scratch:/opt/spark/scratch
+      # For standalone cluster, to see files in the Directory to run applications in
       - ../data/worker-a/work:/opt/spark/work
       # The default location for managed databases and tables. Default (value of $PWD/spark-warehouse) - config: spark.sql.warehouse.dir
       - ../data/worker-a/spark-warehouse:/opt/spark/spark-warehouse
@@ -75,12 +91,20 @@ services:
       - SPARK_WORKER_CORES=10 # Total number of cores to allow Spark applications to use on the machine (default: all available cores).
       - SPARK_WORKER_MEMORY=10G # Total amount of memory to allow Spark applications to use on the machine, e.g. 1000m, 2g (default: total memory minus 1 GiB); note that each application's individual memory is configured using its spark.executor.memory property.
       - SPARK_DAEMON_MEMORY=1G # Memory to allocate to the Spark master and worker daemons themselves (default: 1g).
+      # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk.
+      - SPARK_LOCAL_DIRS=/opt/spark/scratch
+      # For standalone cluster, Directory to run applications in, which will include both logs and scratch space (default: SPARK_HOME/work).
+      - SPARK_WORKER_DIR=/opt/spark/work
     volumes:
       ############ Custom user directories
       - ../apps:/opt/spark-apps
       - ../data:/opt/spark-data
       ############ Spark default directories
-      # Directory to use for "scratch" space in Spark, including map output files and RDDs that get stored on disk. Spark uses temporary scratch space to spill data to disk during shuffles and other operations
+      # Default directory to use for "scratch" space in Spark, overridden by SPARK_LOCAL_DIRS above in environment. Added this volume to see if something will be saved there.
+      - ../data/worker-b/tmp:/tmp
+      # Directory to use for "scratch" in our standalone cluster (see SPARK_LOCAL_DIRS env above)
+      - ../data/worker-b/scratch:/opt/spark/scratch
+      # For standalone cluster, to see files in the Directory to run applications in
       - ../data/worker-b/work:/opt/spark/work
       # The default location for managed databases and tables. Default (value of $PWD/spark-warehouse) - config: spark.sql.warehouse.dir
       - ../data/worker-b/spark-warehouse:/opt/spark/spark-warehouse

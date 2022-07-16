@@ -138,7 +138,7 @@ Go to http://localhost:4747/ to see that one job was triggered and look at the l
 
 Note that in the output log it was shown "...Planning scan with bin packing, max size: 134217728 bytes" = 128 MB
 
-3. Try the count action to check how many jobs will be created and how many tasks will be performed
+## Try the count action to check how many jobs will be created and how many tasks will be performed
 
 ```shell
 docker exec -it spark-master bash
@@ -163,14 +163,39 @@ spark-submit --class net.pmoreira.samples.spark.partition.whatis.App \
 ![](../assets/img/partition-whatis-count-stage-details-tst-01.png)
 
 
-Todo:
+## Persist the Dataframe (RDD) to disk to see the number of files (partitions) after read the csv file
 
-- create a group by operation to see if will result in partitions with diferent size depend on group by
-- create a map operation to see execution memory in use in each task
-- if I double the executor memory what will be the impact on GC logs (141M->43M(502M), 502M will double?)
+Try --checkpointDataset and --eagerCheckpoint parameter to see the persisted RDD on disck in docker folder volume (docker/data/checkpoint) without execute any action.
 
+```shell
+docker exec -it spark-master bash
+spark-submit --class net.pmoreira.samples.spark.partition.whatis.App \
+--deploy-mode client \
+--master spark://spark-master:7077 \
+--verbose \
+--driver-memory 3g \
+--driver-cores 1 \
+--driver-java-options "-XX:OnOutOfMemoryError='kill -9 %p'" \
+--conf "spark.executor.extraJavaOptions=-verbose:gc -Xlog:gc=debug:file=/opt/spark/logs/-executorgclog.txt -XX:OnOutOfMemoryError='kill -9 %p'" \
+--executor-memory 1g \
+--total-executor-cores 4 \
+--executor-cores 2 \
+/opt/spark-apps/partition-whatis-all.jar --checkpointDataset --eagerCheckpoint --sleepSeconds 600
+```
+
+![](../assets/img/checkpoint-rdd-folder.png)
+
+![](../assets/img/rdd-partitions-file.png)
+
+![](../assets/img/total_partitions_file.png)
+
+![](../assets/img/checkpoint-rdd-folder.png)
+
+![](../assets/img/checkpoint-sample-code.png)
 
 # Case study 02 - Emulate spill do disk, shuffle and how to solve calculating the spark.sql.shuffle.partitions size
+
+TODO:
 
 2. Configure the cluster to:
    1. 20 GB for executors (10 GB each)
@@ -198,23 +223,3 @@ Todo:
       5. Check for spillage to disk
       6. Check if the size that matters is the full size of dataset, in that case 5GB and even though the input partition is 128 MB our shuffle partition calculation was important
 
-
-
-
-```shell
-docker exec -it spark-master bash
-spark-submit --class net.pmoreira.samples.spark.partition.whatis.App \
---deploy-mode client \
---master spark://spark-master:7077 \
---verbose \
---driver-memory 3g \
---driver-cores 1 \
---driver-java-options "-XX:OnOutOfMemoryError='kill -9 %p'" \
---conf spark.driver.log.persistToDfs.enabled=true \
---conf spark.driver.log.dfsDir=/opt/spark/logs/ \
---conf "spark.executor.extraJavaOptions=-verbose:gc -Xlog:gc=debug:file=/opt/spark/logs/-executorgclog.txt -XX:OnOutOfMemoryError='kill -9 %p'" \
---executor-memory 1g \
---total-executor-cores 1 \
---executor-cores 1 \
-/opt/spark-apps/partition-whatis-all.jar
-```
