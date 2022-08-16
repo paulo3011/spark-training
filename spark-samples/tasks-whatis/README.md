@@ -19,6 +19,20 @@ This means:
 
 Note: The number of parallel task that can run on each executor depends on the number of cores (cpu) each executor has.
 
+
+### spark.default.parallelism
+
+**Default number of partitions in RDDs returned by transformations** like join, reduceByKey, and parallelize when not set by user.
+
+https://spark.apache.org/docs/latest/configuration.html
+
+**Spark automatically sets the number** of “map” tasks to run on each file according to its size.
+and for distributed “reduce” operations, such as groupByKey and reduceByKey, it uses the largest parent RDD’s number of partitions.
+
+https://spark.apache.org/docs/latest/tuning.html
+
+This doesn't change the fact that to process partitions in parallel we need more cores (1 partition per core per executor)
+
 ## What is job?
 
 Set of transformations triggered by an individual action, before the trigger it is called dag.
