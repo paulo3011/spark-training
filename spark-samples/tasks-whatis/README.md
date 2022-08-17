@@ -31,7 +31,32 @@ and for distributed “reduce” operations, such as groupByKey and reduceByKey,
 
 https://spark.apache.org/docs/latest/tuning.html
 
-This doesn't change the fact that to process partitions in parallel we need more cores (1 partition per core per executor)
+Note: This doesn't change the fact that to process partitions in parallel we need more cores (1 partition per core per executor).
+
+Transformations affected by this setting in Spark v3.1.1:
+
+* RDD.groupBy
+* PairRDDFunctions.aggregateByKey
+* PairRDDFunctions.foldByKey
+* PairRDDFunctions.reduceByKey
+* PairRDDFunctions.countApproxDistinctByKey
+* PairRDDFunctions.combineByKeyWithClassTag
+* PairRDDFunctions.groupByKey
+* PairRDDFunctions.join
+* PairRDDFunctions.leftOuterJoin
+* PairRDDFunctions.rightOuterJoin
+* PairRDDFunctions.fullOuterJoin
+* parallelize when not set by user
+
+Note that are transformations in RDD API only, so SQL or the DataFrame/Dataset API should be affected by spark.sql.shuffle.partitions and not by spark.default.parallelism.
+
+Seealso: https://github.com/apache/spark/blob/v3.1.1/sql/core/src/main/scala/org/apache/spark/sql/Dataset.scala
+
+### spark.sql.shuffle.partitions
+
+Configures the number of partitions to use when shuffling data for joins or aggregations in SQL or the DataFrame/Dataset API.
+
+Note: This doesn't change the fact that to process partitions in parallel we need more cores (1 partition per core per executor)
 
 ## What is job?
 
