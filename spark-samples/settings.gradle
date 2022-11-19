@@ -8,4 +8,5 @@ include 'tasks-whatis'
 include 'partition-whatis'
 include 'partition-groupbykey'
 include 'utils'
+include 'spilltodisk'
 
